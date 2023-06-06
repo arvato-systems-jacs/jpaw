@@ -71,4 +71,5 @@ jobs:
 
     - name: Prepare and Release Packages
       run: mvn -B -U -P github -DdryRun -Darguments=-DskipTests -DretryFailedDeploymentCount=${{ env.DEPLOY_RETRY }} -DreleaseVersion=${{ inputs.release_version }} release:prepare release:perform
-
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
