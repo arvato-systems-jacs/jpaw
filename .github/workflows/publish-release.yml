@@ -29,9 +29,6 @@ jobs:
       contents: write
       packages: write
 
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
-
     steps:
     - uses: actions/checkout@v3
 
@@ -58,8 +55,8 @@ jobs:
     - name: Update Parent Version
       run: |
         mvn -B versions:update-parent
-        git commit -am "Update parent version to latest version"
-        git push
+        git add -A
+        git diff-index --quiet HEAD || (git commit -m 'Update parent version to latest version' && git push)
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
@@ -67,8 +64,10 @@ jobs:
       if: ${{ inputs.release_version != '' }}
       run: |
         sed -i 's/Bundle-Version:.*/Bundle-Version: ${{ inputs.release_version }}/g' **/META-INF/MANIFEST.MF
-        git commit -am "Update Bundle-Version to ${{ inputs.release_version }}"
-        git push
+        git add -A
+        git diff-index --quiet HEAD || (git commit -m 'Update Bundle-Version to ${{ inputs.release_version }}' && git push)
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Prepare and Release Packages
       run: mvn -B -U -P github -DdryRun -Darguments=-DskipTests -DretryFailedDeploymentCount=${{ env.DEPLOY_RETRY }} -DreleaseVersion=${{ inputs.release_version }} release:prepare release:perform
