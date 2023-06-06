@@ -29,6 +29,9 @@ jobs:
       contents: write
       packages: write
 
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+
     steps:
     - uses: actions/checkout@v3
 
@@ -52,20 +55,21 @@ jobs:
     - name: Configure Git User
       run: git config user.name "Release Management"
 
+    - name: Update Parent Version
+      run: |
+        mvn -B versions:update-parent
+        git commit -am "Update parent version"
+        git push
+
     - name: Prepare Release Packages (release:prepare)
       run: mvn -B -U -P github -Darguments=-DskipTests release:prepare
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Update Bundle Version / MANIFEST
       run: |
         sed -i 's/Bundle-Version:.*/Bundle-Version: ${{ inputs.release_version }}/g' **/META-INF/MANIFEST.MF
         git commit -am "Update Bundle-Version to ${{ inputs.release_version }}"
         git push
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Deploy Release Packages (release:perform)
       run: mvn -B -U -P github -DdryRun -Darguments=-DskipTests -DretryFailedDeploymentCount=${{ env.DEPLOY_RETRY }} release:perform
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+
