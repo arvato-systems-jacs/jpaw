@@ -11,7 +11,9 @@ on:
         description: 'Release Version'
         required: true
         type: string
-
+  push:
+    branches:
+      - feature/test-bundle-version-update
 env:
   JAVA_VERSION_TO_USE: '11'
   JAVA_DISTRI_TO_USE: 'corretto'
@@ -50,7 +52,20 @@ jobs:
     - name: Configure Git User
       run: git config user.name "Release Management"
 
-    - name: Release Packages
-      run: mvn -B -U -P github -Darguments=-DskipTests -DretryFailedDeploymentCount=${{ env.DEPLOY_RETRY }} release:prepare release:perform
+    - name: Prepare Release Packages (release:prepare)
+      run: mvn -B -U -P github -Darguments=-DskipTests release:prepare
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Update Bundle Version / MANIFEST
+      run: |
+        sed -i 's/Bundle-Version:.*/Bundle-Version: ${{ inputs.release_version }}/g' **/META-INF/MANIFEST.MF
+        git commit -am "Update Bundle-Version to ${{ inputs.release_version }}"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Deploy Release Packages (release:perform)
+      run: mvn -B -U -P github -DdryRun -Darguments=-DskipTests -DretryFailedDeploymentCount=${{ env.DEPLOY_RETRY }} release:perform
       env:
         GITHUB_TOKEN: ${{ github.token }}
