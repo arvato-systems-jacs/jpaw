@@ -58,36 +58,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-            <!-- Release -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagNameFormat>v@{project.version}</tagNameFormat>
-                    <preparationGoals>org.codehaus.mojo:versions-maven-plugin:update-parent org.apache.maven.plugins:maven-scm-plugin:add</preparationGoals>
-                    <completionGoals>org.codehaus.mojo:versions-maven-plugin:update-parent org.apache.maven.plugins:maven-scm-plugin:add</completionGoals>
-                </configuration>
-            </plugin>
-            
-            <!-- Used to add changed files by tycho:update-eclipse-metadata -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-plugin</artifactId>
-                <version>2.0.1</version>
-                <executions>
-                    <execution>
-                        <id>default-cli</id>
-                        <goals>
-                            <goal>add</goal>
-                        </goals>
-                    <configuration>
-                        <includes>pom.xml</includes>
-                        <excludes>**/target/**</excludes>
-                    </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
