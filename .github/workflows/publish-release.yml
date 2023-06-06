@@ -60,6 +60,8 @@ jobs:
         mvn -B versions:update-parent
         git commit -am "Update parent version to latest version"
         git push
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Update Bundle Version / MANIFEST
       if: ${{ inputs.release_version != '' }}
