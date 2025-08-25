@@ -40,8 +40,8 @@
 
         <!-- core tools used -->
         <guava.version>33.4.8-jre</guava.version>       <!-- http://code.google.com/p/guava-libraries/ -->
-        <xtext.version>2.38.0</xtext.version>           <!-- version of xtext, xtend, and the related libs -->
-        <jdt.version>3.39.0</jdt.version>                <!-- requires min 3.37.0 for Java 17/21 features in Xtext -->
+        <xtext.version>2.40.0</xtext.version>           <!-- version of xtext, xtend, and the related libs -->
+        <jdt.version>3.42.0</jdt.version>               <!-- requires min 3.37.0 for Java 17/21 features in Xtext -->
         <jodatime.version>2.14.0</jodatime.version>
         <jsap.version>2.1</jsap.version>
         <reflections.version>0.9.10</reflections.version>  <!-- 0.9.11 got issues while scanning -->
