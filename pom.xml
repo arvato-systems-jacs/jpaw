@@ -48,7 +48,7 @@
         <icu.version>77.1</icu.version>
         <disruptor.version>3.3.11</disruptor.version>
         <jackson.version>2.19.2</jackson.version>
-        <jackson-databind.version>2.19.1</jackson-databind.version>       <!-- separate version due to frequent CVE updates which do not release the full set -->
+        <jackson-databind.version>2.19.2</jackson-databind.version>       <!-- separate version due to frequent CVE updates which do not release the full set -->
         <commons-text.version>1.14.0</commons-text.version>               <!-- not used in t9t, but DM made to cover for transitive dependencies -->
         <commons-lang3.version>3.18.0</commons-lang3.version>             <!-- regularly updated again -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
