@@ -86,11 +86,11 @@
         <exec.plugin.version>3.0.0</exec.plugin.version>
         <antrun.plugin.version>3.1.0</antrun.plugin.version>
         <compiler.plugin.version>3.14.0</compiler.plugin.version>
-        <clean.plugin.version>3.4.1</clean.plugin.version>
-        <enforcer.plugin.version>3.5.0</enforcer.plugin.version>
+        <clean.plugin.version>3.5.0</clean.plugin.version>
+        <enforcer.plugin.version>3.6.1</enforcer.plugin.version>
         <jar.plugin.version>3.4.2</jar.plugin.version>
         <war.plugin.version>3.3.2</war.plugin.version>
-        <javadoc.plugin.version>3.11.2</javadoc.plugin.version>
+        <javadoc.plugin.version>3.11.3</javadoc.plugin.version>
         <shade.plugin.version>3.6.0</shade.plugin.version>
         <source.plugin.version>3.3.1</source.plugin.version>
         <surefire.plugin.version>3.5.3</surefire.plugin.version>
@@ -100,7 +100,7 @@
         <install.plugin.version>3.1.4</install.plugin.version>
         <site.plugin.version>3.21.0</site.plugin.version>
         <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
-        <project-info-reports.plugin.version>3.8.0</project-info-reports.plugin.version>
+        <project-info-reports.plugin.version>3.9.0</project-info-reports.plugin.version>
         <release.plugin.version>3.1.1</release.plugin.version>
 
         <!-- org.codehaus.mojo maven plugins (xxx-maven-plugin) -->
@@ -111,10 +111,7 @@
         <versions.plugin.version>2.18.0</versions.plugin.version>
 
         <!-- com.github.spotbugs plugins (spotbugs-xxx-plugin) -->
-        <spotbugs.plugin.version>4.9.3.0</spotbugs.plugin.version>
-
-        <!-- org.apache.felix plugins (maven-xxx-plugin) -->
-        <bundle.plugin.version>5.1.2</bundle.plugin.version>
+        <spotbugs.plugin.version>4.9.4.0</spotbugs.plugin.version>
     </properties>
 
 
