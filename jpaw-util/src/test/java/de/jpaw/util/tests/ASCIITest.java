@@ -9,16 +9,16 @@ import de.jpaw.util.CharTestsASCII;
 public class ASCIITest {
 
     private void runTest(String data, boolean isDigits, boolean isUpper, boolean isLower, boolean isPrintable, boolean isPrintableOrTab) {
-        Assertions.assertEquals(CharTestsASCII.isDigit(data),               isDigits);
-        Assertions.assertEquals(CharTestsASCII.isDigitByPattern(data),      isDigits);
-        Assertions.assertEquals(CharTestsASCII.isUpperCase(data),           isUpper);
-        Assertions.assertEquals(CharTestsASCII.isUpperCaseByPattern(data),  isUpper);
-        Assertions.assertEquals(CharTestsASCII.isLowerCase(data),           isLower);
-        Assertions.assertEquals(CharTestsASCII.isLowerCaseByPattern(data),  isLower);
-        Assertions.assertEquals(CharTestsASCII.isPrintable(data),           isPrintable);
-        Assertions.assertEquals(CharTestsASCII.isPrintableByPattern(data),  isPrintable);
-        Assertions.assertEquals(CharTestsASCII.isPrintableOrTab(data),      isPrintableOrTab);
-        Assertions.assertEquals(CharTestsASCII.isPrintableOrTabByPattern(data), isPrintableOrTab);
+        Assertions.assertEquals(isDigits,        CharTestsASCII.isDigit(data));
+        Assertions.assertEquals(isDigits,        CharTestsASCII.isDigitByPattern(data));
+        Assertions.assertEquals(isUpper,         CharTestsASCII.isUpperCase(data));
+        Assertions.assertEquals(isUpper,         CharTestsASCII.isUpperCaseByPattern(data));
+        Assertions.assertEquals(isLower,         CharTestsASCII.isLowerCase(data));
+        Assertions.assertEquals(isLower,         CharTestsASCII.isLowerCaseByPattern(data));
+        Assertions.assertEquals(isPrintable,     CharTestsASCII.isPrintable(data));
+        Assertions.assertEquals(isPrintable,     CharTestsASCII.isPrintableByPattern(data));
+        Assertions.assertEquals(isPrintableOrTab, CharTestsASCII.isPrintableOrTab(data));
+        Assertions.assertEquals(isPrintableOrTab, CharTestsASCII.isPrintableOrTabByPattern(data));
     }
 
     @Test

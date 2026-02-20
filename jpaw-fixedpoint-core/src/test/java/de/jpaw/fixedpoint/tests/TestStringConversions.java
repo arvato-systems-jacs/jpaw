@@ -67,7 +67,7 @@ public class TestStringConversions {
         for (int i = 0; i < testCasesParse.length; ++i) {
             TestCase t = testCasesParse[i];
             if (t.data != null) {
-                Assertions.assertEquals(MilliUnits.valueOf(t.stringRep), t.data);
+                Assertions.assertEquals(t.data, MilliUnits.valueOf(t.stringRep));
             } else {
                 try {
                     MilliUnits.valueOf(t.stringRep);

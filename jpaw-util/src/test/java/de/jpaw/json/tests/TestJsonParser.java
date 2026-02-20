@@ -15,22 +15,22 @@ public class TestJsonParser {
 
     @Test
     public void testParseNumObject() throws Exception {
-        Assertions.assertEquals(new JsonParser("-65656565", true).parseElement(), Integer.valueOf(-65656565));
-        Assertions.assertEquals(new JsonParser("-656565628282828285", true).parseElement(), Long.valueOf(-656565628282828285L));
-        Assertions.assertEquals(new JsonParser("3.14", false).parseElement(), new BigDecimal("3.14"));
-        Assertions.assertEquals(new JsonParser("3.14", true).parseElement(), Double.valueOf(3.14));
+        Assertions.assertEquals(Integer.valueOf(-65656565),          new JsonParser("-65656565", true).parseElement());
+        Assertions.assertEquals(Long.valueOf(-656565628282828285L),   new JsonParser("-656565628282828285", true).parseElement());
+        Assertions.assertEquals(new BigDecimal("3.14"),               new JsonParser("3.14", false).parseElement());
+        Assertions.assertEquals(Double.valueOf(3.14),                 new JsonParser("3.14", true).parseElement());
     }
 
     @Test
     public void testParseStringObject() throws Exception {
-        Assertions.assertEquals(new JsonParser("\"hello\"", true).parseElement(), "hello");
+        Assertions.assertEquals("hello", new JsonParser("\"hello\"", true).parseElement());
         Assertions.assertNull(new JsonParser("null",      true).parseElement());
     }
 
     @Test
     public void testParseBooleanObject() throws Exception {
-        Assertions.assertEquals(new JsonParser("true",  true).parseElement(), Boolean.TRUE);
-        Assertions.assertEquals(new JsonParser("false", true).parseElement(), Boolean.FALSE);
+        Assertions.assertEquals(Boolean.TRUE,  new JsonParser("true",  true).parseElement());
+        Assertions.assertEquals(Boolean.FALSE, new JsonParser("false", true).parseElement());
     }
 
     private static Map<String, Object> createMap() {
@@ -48,7 +48,7 @@ public class TestJsonParser {
         String in = "  { \"what\"   : true, \"why\":\"bla\"   , \"hello\":  +42 , \"none\": null , \"submap\": {} } ";
         System.out.println("012345678901234567890123456789012345678901234567890123456789");
         System.out.println(in);
-        Assertions.assertEquals(new JsonParser(in, false).parseObject(), createMap());
+        Assertions.assertEquals(createMap(), new JsonParser(in, false).parseObject());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class TestJsonParser {
         out.outputJsonObject(createMap());
         // difficult to check the output as the ordering of the fields is not defined.
         // {"submap":{},"what":true,"why":"bla","hello":42,"none":null}
-        Assertions.assertEquals(sb.length(), 60);       // the length should be constant
+        Assertions.assertEquals(60, sb.length());       // the length should be constant
         System.out.println(sb.toString());
 
         sb.setLength(0);
@@ -66,7 +66,7 @@ public class TestJsonParser {
         out.outputJsonObject(createMap());
         // difficult to check the output as the ordering of the fields is not defined.
         // {"submap":{},"what":true,"why":"bla","hello":42}
-        Assertions.assertEquals(sb.length(), 48);       // the length should be constant
+        Assertions.assertEquals(48, sb.length());       // the length should be constant
         System.out.println(sb.toString());
     }
 }

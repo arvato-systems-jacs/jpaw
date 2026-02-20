@@ -17,9 +17,9 @@ public class KeyConverterTest {
     public void testA2ToInt(boolean initCache) throws Exception {
         if (initCache)
             CountryKeyConverter.populateCache();
-        Assertions.assertEquals(CountryKeyConverter.countryCodeA2ToInt("DE"), 5);
-        Assertions.assertEquals(CountryKeyConverter.countryCodeA2ToInt("ES"), 100 + 4 * 26 + 18);
-        Assertions.assertEquals(CountryKeyConverter.countryCodeA2ToInt("XX"), 1);
+        Assertions.assertEquals(5,                 CountryKeyConverter.countryCodeA2ToInt("DE"));
+        Assertions.assertEquals(100 + 4 * 26 + 18, CountryKeyConverter.countryCodeA2ToInt("ES"));
+        Assertions.assertEquals(1,                 CountryKeyConverter.countryCodeA2ToInt("XX"));
     }
 
     @ParameterizedTest
@@ -27,9 +27,9 @@ public class KeyConverterTest {
     public void testIntToA2(boolean initCache) throws Exception {
         if (initCache)
             CountryKeyConverter.populateCache();
-        Assertions.assertEquals(CountryKeyConverter.intToCountryCodeA2(5), "DE");
-        Assertions.assertEquals(CountryKeyConverter.intToCountryCodeA2(100 + 4 * 26 + 18), "ES");
-        Assertions.assertEquals(CountryKeyConverter.intToCountryCodeA2(1), "XX");
+        Assertions.assertEquals("DE", CountryKeyConverter.intToCountryCodeA2(5));
+        Assertions.assertEquals("ES", CountryKeyConverter.intToCountryCodeA2(100 + 4 * 26 + 18));
+        Assertions.assertEquals("XX", CountryKeyConverter.intToCountryCodeA2(1));
     }
 
     @ParameterizedTest
@@ -37,9 +37,9 @@ public class KeyConverterTest {
     public void testA3ToInt(boolean initCache) throws Exception {
         if (initCache)
             CurrencyKeyConverter.populateCache(JavaCurrencyDataProvider.INSTANCE);
-        Assertions.assertEquals(CurrencyKeyConverter.currencyCodeA3ToInt("USD"), 2);
-        Assertions.assertEquals(CurrencyKeyConverter.currencyCodeA3ToInt("TND"), 100 + 19 * 676 + 13 * 26 + 3);
-        Assertions.assertEquals(CurrencyKeyConverter.currencyCodeA3ToInt("XXX"), 1);
+        Assertions.assertEquals(2,                           CurrencyKeyConverter.currencyCodeA3ToInt("USD"));
+        Assertions.assertEquals(100 + 19 * 676 + 13 * 26 + 3, CurrencyKeyConverter.currencyCodeA3ToInt("TND"));
+        Assertions.assertEquals(1,                           CurrencyKeyConverter.currencyCodeA3ToInt("XXX"));
     }
 
     @ParameterizedTest
@@ -47,9 +47,9 @@ public class KeyConverterTest {
     public void testIntToA3(boolean initCache) throws Exception {
         if (initCache)
             CurrencyKeyConverter.populateCache(JavaCurrencyDataProvider.INSTANCE);
-        Assertions.assertEquals(CurrencyKeyConverter.intToCurrencyCodeA3(2), "USD");
-        Assertions.assertEquals(CurrencyKeyConverter.intToCurrencyCodeA3(100 + 19 * 676 + 13 * 26 + 3), "TND");
-        Assertions.assertEquals(CurrencyKeyConverter.intToCurrencyCodeA3(1), "XXX");
+        Assertions.assertEquals("USD", CurrencyKeyConverter.intToCurrencyCodeA3(2));
+        Assertions.assertEquals("TND", CurrencyKeyConverter.intToCurrencyCodeA3(100 + 19 * 676 + 13 * 26 + 3));
+        Assertions.assertEquals("XXX", CurrencyKeyConverter.intToCurrencyCodeA3(1));
     }
 
     @ParameterizedTest
@@ -57,9 +57,9 @@ public class KeyConverterTest {
     public void testLangToInt(boolean initCache) throws Exception {
         if (initCache)
             LanguageKeyConverter.populateCache();
-        Assertions.assertEquals(LanguageKeyConverter.languageCodeToInt("es"), 2);               // frequent
-        Assertions.assertEquals(LanguageKeyConverter.languageCodeToInt("bb"), 60 + 2 * 32 + 2); // uncached
-        Assertions.assertEquals(LanguageKeyConverter.languageCodeToInt("xx"), 1);               // default, smallest value
+        Assertions.assertEquals(2,                   LanguageKeyConverter.languageCodeToInt("es"));               // frequent
+        Assertions.assertEquals(60 + 2 * 32 + 2,    LanguageKeyConverter.languageCodeToInt("bb")); // uncached
+        Assertions.assertEquals(1,                   LanguageKeyConverter.languageCodeToInt("xx"));               // default, smallest value
     }
 
     @ParameterizedTest
@@ -67,8 +67,8 @@ public class KeyConverterTest {
     public void testIntToLang(boolean initCache) throws Exception {
         if (initCache)
             LanguageKeyConverter.populateCache();
-        Assertions.assertEquals(LanguageKeyConverter.intToLanguageCode(2), "es");
-        Assertions.assertEquals(LanguageKeyConverter.intToLanguageCode(60 + 2 * 32 + 2), "bb");
-        Assertions.assertEquals(LanguageKeyConverter.intToLanguageCode(1), "xx");
+        Assertions.assertEquals("es", LanguageKeyConverter.intToLanguageCode(2));
+        Assertions.assertEquals("bb", LanguageKeyConverter.intToLanguageCode(60 + 2 * 32 + 2));
+        Assertions.assertEquals("xx", LanguageKeyConverter.intToLanguageCode(1));
     }
 }

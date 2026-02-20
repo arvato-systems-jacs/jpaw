@@ -16,7 +16,7 @@ public class Escape2JavaTest {
             String esc1 = StringEscapeUtils.escapeJava(s);
             String esc2 = Escape2Java.escapeString2Java(s);
 
-            Assertions.assertEquals(esc2, esc1);
+            Assertions.assertEquals(esc1, esc2);
         }
     }
 }

@@ -82,18 +82,18 @@ public class TestArithmetic {
 
     @Test
     public void testFloorAndCeilPos() throws Exception {
-       Assertions.assertEquals(MicroUnits.of(3_000_000).floor(), MicroUnits.valueOf(3));
-       Assertions.assertEquals(MicroUnits.of(3_000_000).ceil(),  MicroUnits.valueOf(3));
-       Assertions.assertEquals(MicroUnits.of(3_140_000).floor(), MicroUnits.valueOf(3));
-       Assertions.assertEquals(MicroUnits.of(3_140_000).ceil(),  MicroUnits.valueOf(4));
+       Assertions.assertEquals(MicroUnits.valueOf(3),  MicroUnits.of(3_000_000).floor());
+       Assertions.assertEquals(MicroUnits.valueOf(3),  MicroUnits.of(3_000_000).ceil());
+       Assertions.assertEquals(MicroUnits.valueOf(3),  MicroUnits.of(3_140_000).floor());
+       Assertions.assertEquals(MicroUnits.valueOf(4),  MicroUnits.of(3_140_000).ceil());
     }
 
     @Test
     public void testFloorAndCeilNeg() throws Exception {
-       Assertions.assertEquals(MicroUnits.of(-3_000_000).floor(), MicroUnits.valueOf(-3));
-       Assertions.assertEquals(MicroUnits.of(-3_000_000).ceil(),  MicroUnits.valueOf(-3));
-       Assertions.assertEquals(MicroUnits.of(-3_140_000).floor(), MicroUnits.valueOf(-4));
-       Assertions.assertEquals(MicroUnits.of(-3_140_000).ceil(),  MicroUnits.valueOf(-3));
+       Assertions.assertEquals(MicroUnits.valueOf(-3), MicroUnits.of(-3_000_000).floor());
+       Assertions.assertEquals(MicroUnits.valueOf(-3), MicroUnits.of(-3_000_000).ceil());
+       Assertions.assertEquals(MicroUnits.valueOf(-4), MicroUnits.of(-3_140_000).floor());
+       Assertions.assertEquals(MicroUnits.valueOf(-3), MicroUnits.of(-3_140_000).ceil());
     }
 
     @Test
