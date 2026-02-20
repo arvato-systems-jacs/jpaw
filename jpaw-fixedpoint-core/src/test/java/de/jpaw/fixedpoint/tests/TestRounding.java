@@ -54,17 +54,17 @@ public class TestRounding {
     @Test
     public void testRoundingHalfPositive() throws Exception {
         final MicroUnits a = MicroUnits.of(995000L); // 0.995
-        Assertions.assertEquals(a.round(2, RoundingMode.HALF_DOWN), MicroUnits.of(990000L), "half down");
-        Assertions.assertEquals(a.round(2, RoundingMode.HALF_UP),   MicroUnits.ONE, "half up");
-        Assertions.assertEquals(a.round(2, RoundingMode.HALF_EVEN), MicroUnits.ONE, "half even");
+        Assertions.assertEquals(MicroUnits.of(990000L), a.round(2, RoundingMode.HALF_DOWN), "half down");
+        Assertions.assertEquals(MicroUnits.ONE,         a.round(2, RoundingMode.HALF_UP),   "half up");
+        Assertions.assertEquals(MicroUnits.ONE,         a.round(2, RoundingMode.HALF_EVEN), "half even");
     }
 
     @Test
     public void testRoundingHalfNegative() throws Exception {
         final MicroUnits a = MicroUnits.of(-995000L); // 0.995
-        Assertions.assertEquals(a.round(2, RoundingMode.HALF_DOWN), MicroUnits.of(-990000L), "half down");
-        Assertions.assertEquals(a.round(2, RoundingMode.HALF_UP),   MicroUnits.ONE.negate(), "half up");
-        Assertions.assertEquals(a.round(2, RoundingMode.HALF_EVEN), MicroUnits.ONE.negate(), "half even");
+        Assertions.assertEquals(MicroUnits.of(-990000L),  a.round(2, RoundingMode.HALF_DOWN), "half down");
+        Assertions.assertEquals(MicroUnits.ONE.negate(),   a.round(2, RoundingMode.HALF_UP),   "half up");
+        Assertions.assertEquals(MicroUnits.ONE.negate(),   a.round(2, RoundingMode.HALF_EVEN), "half even");
     }
 
     @Test

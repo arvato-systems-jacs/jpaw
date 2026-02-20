@@ -12,6 +12,6 @@ public class JsonEscaperTest {
         StringBuilder buff = new StringBuilder(100);
         BaseJsonComposer escaper = new BaseJsonComposer(buff);
         escaper.outputUnicodeWithControls("E\nS\bC");
-        Assertions.assertEquals(buff.toString(), "\"E\\nS\\bC\"");
+        Assertions.assertEquals("\"E\\nS\\bC\"", buff.toString());
     }
 }
