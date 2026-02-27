@@ -75,8 +75,8 @@
 
         <!-- testing support -->
         <junit.version>4.13.2</junit.version>
-        <junit5.version>5.12.2</junit5.version>
-        <junit5.platform.version>1.12.2</junit5.platform.version>
+        <junit5.version>6.0.3</junit5.version>
+        <junit5.platform.version>6.0.3</junit5.platform.version>
         <spotbugs.version>4.9.8</spotbugs.version>
 
         <!--  benchmarking -->
