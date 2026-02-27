@@ -112,6 +112,8 @@
 
         <!-- com.github.spotbugs plugins (spotbugs-xxx-plugin) -->
         <spotbugs.plugin.version>4.9.8.2</spotbugs.plugin.version>
+        <!-- com.diffplug.spotless plugin -->
+        <spotless.version>3.2.1</spotless.version>
     </properties>
 
 
@@ -371,6 +373,36 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>${spotless.version}</version>
+
+                    <configuration>
+                        <java>
+                            <!-- Import order definition -->
+                            <importOrder>
+                                <order>java,javax,jakarta,,de.jpaw</order>
+                            </importOrder>
+
+                            <!-- Remove unused imports -->
+                            <removeUnusedImports />
+
+                            <!-- Optional: Use Eclipse formatter -->
+                            <!-- <eclipse>
+                              <version>4.29</version>
+                            </eclipse> -->
+                        </java>
+                    </configuration>
+
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>apply</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -895,6 +927,17 @@
                     <url>https://maven.pkg.github.com/arvato-systems-jacs/jpaw</url>
                 </repository>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>fiximports</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.diffplug.spotless</groupId>
+                        <artifactId>spotless-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
