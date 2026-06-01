@@ -40,8 +40,8 @@
 
         <!-- core tools used -->
         <guava.version>33.5.0-jre</guava.version>       <!-- http://code.google.com/p/guava-libraries/ -->
-        <xtext.version>2.42.0</xtext.version>           <!-- version of xtext, xtend, and the related libs -->
-        <jdt.version>3.44.0</jdt.version>               <!-- requires min 3.37.0 for Java 17/21 features in Xtext -->
+        <xtext.version>2.43.0</xtext.version>           <!-- version of xtext, xtend, and the related libs -->
+        <jdt.version>3.45.0</jdt.version>
         <jodatime.version>2.14.0</jodatime.version>
         <jsap.version>2.1</jsap.version>
         <reflections.version>0.9.10</reflections.version>  <!-- 0.9.11 got issues while scanning -->
@@ -407,23 +407,10 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler.plugin.version}</version>
                     <configuration>
-                        <release>17</release>
-                        <source>17</source>
-                        <target>17</target>
+                        <release>21</release>
+                        <source>21</source>
+                        <target>21</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
-<!--
-                        <compilerArgs>
-                            <arg>-XDcompilePolicy=simple</arg>
-                            <arg>-Xplugin:ErrorProne</arg>
-                        </compilerArgs>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>com.google.errorprone</groupId>
-                                <artifactId>error_prone_core</artifactId>
-                                <version>${error-prone.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
--->
                     </configuration>
                 </plugin>
 
@@ -651,7 +638,7 @@
                     <version>${javadoc.plugin.version}</version>
                     <configuration>
                         <charset>UTF-8</charset>
-                        <source>17</source>
+                        <source>21</source>
                         <detectJavaApiLink>false</detectJavaApiLink>
                     </configuration>
                 </plugin>
