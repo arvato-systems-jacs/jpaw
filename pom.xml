@@ -407,9 +407,9 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler.plugin.version}</version>
                     <configuration>
-                        <release>21</release>
-                        <source>21</source>
-                        <target>21</target>
+                        <release>25</release>
+                        <source>25</source>
+                        <target>25</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
@@ -638,7 +638,7 @@
                     <version>${javadoc.plugin.version}</version>
                     <configuration>
                         <charset>UTF-8</charset>
-                        <source>21</source>
+                        <source>25</source>
                         <detectJavaApiLink>false</detectJavaApiLink>
                     </configuration>
                 </plugin>
