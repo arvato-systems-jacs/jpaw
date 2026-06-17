@@ -3,7 +3,7 @@
 
     <groupId>de.jpaw</groupId>
     <artifactId>jpaw-base</artifactId>
-    <version>3.9.2-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>Common configuration settings for all jpaw basic / utility projects and 3rd party BoM</description>
@@ -853,10 +853,6 @@
         <module>jpaw-json</module>
         <module>jpaw-socket</module>
         <module>jpaw-cmdline</module>
-        <module>jpaw-batch</module>
-        <module>jpaw-batch-lmax</module>
-        <module>jpaw-batch-poi</module>
-        <module>jpaw-batch-xls2csv</module>
         <module>jpaw-money</module>
         <module>jpaw-money-test</module>
         <module>jpaw-xml</module>
@@ -866,8 +862,6 @@
         <module>jpaw-enumsets-test</module>
         <module>jpaw-benchmarks</module>
         <module>jpaw-xtend</module>
-        <module>jpaw8-batch</module>
-        <module>jpaw8-benchmarks</module>
 
         <!-- jdp project, formerly separate -->
         <module>jdp-bom/pom.xml</module>
