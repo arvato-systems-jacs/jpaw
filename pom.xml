@@ -851,8 +851,6 @@
         <module>jpaw-fixedpoint-money-test</module>
         <module>jpaw-fixedpoint-benchmarks</module>
         <module>jpaw-json</module>
-        <module>jpaw-socket</module>
-        <module>jpaw-cmdline</module>
         <module>jpaw-money</module>
         <module>jpaw-money-test</module>
         <module>jpaw-xml</module>
@@ -861,7 +859,6 @@
         <module>jpaw-enumsets</module>
         <module>jpaw-enumsets-test</module>
         <module>jpaw-benchmarks</module>
-        <module>jpaw-xtend</module>
 
         <!-- jdp project, formerly separate -->
         <module>jdp-bom/pom.xml</module>
