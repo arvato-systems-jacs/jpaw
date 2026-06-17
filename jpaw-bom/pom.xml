@@ -69,26 +69,6 @@
             </dependency>
             <dependency>
                 <groupId>de.jpaw</groupId>
-                <artifactId>jpaw-socket</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
-                <artifactId>jpaw-cmdline</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
-                <artifactId>jpaw-batch</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
-                <artifactId>jpaw-batch-lmax</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
                 <artifactId>jpaw-money</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -125,21 +105,6 @@
             <dependency>
                 <groupId>de.jpaw</groupId>
                 <artifactId>jpaw-benchmarks</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
-                <artifactId>jpaw-xtend</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
-                <artifactId>jpaw8-batch</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jpaw</groupId>
-                <artifactId>jpaw8-benchmarks</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
