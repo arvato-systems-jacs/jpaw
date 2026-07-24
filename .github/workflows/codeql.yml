@@ -1,54 +1,11 @@
-name: "CodeQL"
+name: CodeQL
 
 on:
-  workflow_dispatch: # enable manual trigger
-  push:
-    branches: [ "master" ]
-    paths-ignore: [ ".github/**" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_dispatch:
   schedule:
-    - cron: '42 12 * * 0'
-
-# cancel already running instances of this workflow
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
-env:
-  JAVA_VERSION_TO_USE: '21'
-  JAVA_DISTRI_TO_USE: 'corretto'
+    - cron: '42 13 * * 0'
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: java
-
-    - name: Set up JDK ${{ env.JAVA_VERSION_TO_USE }} (${{ env.JAVA_DISTRI_TO_USE }})
-      uses: actions/setup-java@v5
-      with:
-        java-version: ${{ env.JAVA_VERSION_TO_USE }}
-        distribution: ${{ env.JAVA_DISTRI_TO_USE }}
-        cache: maven
-
-    - name: Build
-      run: mvn -B -T 2C -DskipTests package
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:java"
+  job:
+    uses: arvato-systems-jacs/reusable-workflows/.github/workflows/codeql.yml@master
+    secrets: inherit
