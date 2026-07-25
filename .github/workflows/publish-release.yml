@@ -37,16 +37,6 @@ jobs:
         distribution: ${{ env.JAVA_DISTRI_TO_USE }}
         cache: maven
 
-    - name: Configure maven settings.xml
-      uses: whelk-io/maven-settings-xml-action@v22
-      with:
-        repositories: '[{ "id": "github-pkgs", "url": "https://maven.pkg.github.com/arvato-systems-jacs/dummy", "snapshots": { "enabled": "true" } }]'
-        servers: |
-          [
-            { "id": "github-pkgs", "username": "dummy", "password": "${env.GITHUB_TOKEN_READ_PACKAGES}" },
-            { "id": "github", "username": "${env.GITHUB_ACTOR}", "password": "${env.GITHUB_TOKEN_DEPLOY_PACKAGES}" }
-          ]
-
     - name: Configure Git User
       run: |
         git config user.name 'github-actions[bot]'

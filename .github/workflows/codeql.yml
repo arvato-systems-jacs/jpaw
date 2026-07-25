@@ -1,11 +1,35 @@
 name: CodeQL
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   schedule:
-    - cron: '42 13 * * 0'
+    - cron: '42 3 * * 0' # Every Sunday at 03:42 UTC
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
 
 jobs:
-  job:
-    uses: arvato-systems-jacs/reusable-workflows/.github/workflows/codeql.yml@master
-    secrets: inherit
+  analyze:
+    name: Analyze Java
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+
+      # Autobuild works for most Maven/Gradle projects
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
