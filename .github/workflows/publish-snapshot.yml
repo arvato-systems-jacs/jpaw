@@ -8,11 +8,6 @@ on:
     branches: [ "master" ]
     paths-ignore: [ ".github/**" ]
 
-# cancel already running instances of this workflow
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
 env:
   JAVA_VERSION_TO_USE: '21'
   JAVA_DISTRI_TO_USE: 'corretto'
@@ -23,9 +18,11 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
     steps:
     - uses: actions/checkout@v5
 
@@ -36,15 +33,7 @@ jobs:
         distribution: ${{ env.JAVA_DISTRI_TO_USE }}
         cache: maven
 
-    - name: Configure maven settings.xml
-      uses: whelk-io/maven-settings-xml-action@v22
-      with:
-        repositories: '[{ "id": "github-pkgs", "url": "https://maven.pkg.github.com/arvato-systems-jacs/dummy", "snapshots": { "enabled": "true" } }]'
-        servers: |
-          [
-            { "id": "github-pkgs", "username": "dummy", "password": "${env.GITHUB_TOKEN_READ_PACKAGES}" },
-            { "id": "github", "username": "${env.GITHUB_ACTOR}", "password": "${env.GITHUB_TOKEN_DEPLOY_PACKAGES}" }
-          ]
-
     - name: Build and Publish
       run: mvn -B -U -P github -T 1C -DretryFailedDeploymentCount=${{ env.DEPLOY_RETRY }} deploy
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
