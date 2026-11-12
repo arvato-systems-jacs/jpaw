@@ -32,7 +32,8 @@ final public class JdpEntry<T> implements Provider<T> {
     public final boolean specializes;   // autodetected, if @Specializes annotation is set, the entry will override any parent class
     public final Scopes myScope;
     public final Class<T> actualType; // the requested type (interface for example)
-    private T instance = null; // if it's a singleton: the unique instance (not null once it has been called the first time)
+    private volatile T instance = null; // if it's a singleton: the unique instance (not null once it has been called the first time)
+    private final Object singletonLock = new Object();
     private final Provider<T> customScope;
 //    private boolean overriddenBySpecialized = false;
 
@@ -136,16 +137,21 @@ final public class JdpEntry<T> implements Provider<T> {
             switch (myScope) {
             case EAGER_SINGLETON:
                 return instance;
-            case LAZY_SINGLETON:
-                if (instance != null)
-                    return instance;
-                else {
-                    // TODO: lock! But then be aware of deadlocks / cycles!
-                    LOGGER.debug("Instantiating SINGLETON {}", actualType.getCanonicalName());
-                    instance = actualType.newInstance();
-                    LOGGER.debug("Instantiation of SINGLETON {} done", actualType.getCanonicalName());
-                    return instance;
+            case LAZY_SINGLETON: {
+                T result = instance;
+                if (result == null) {
+                    synchronized (singletonLock) {
+                        result = instance;
+                        if (result == null) {
+                            LOGGER.debug("Instantiating SINGLETON {}", actualType.getCanonicalName());
+                            result = actualType.newInstance();
+                            instance = result;
+                            LOGGER.debug("Instantiation of SINGLETON {} done", actualType.getCanonicalName());
+                        }
+                    }
                 }
+                return result;
+            }
             case DEPENDENT:
                 // always return a new instance
                 if (LOGGER.isDebugEnabled()) {
