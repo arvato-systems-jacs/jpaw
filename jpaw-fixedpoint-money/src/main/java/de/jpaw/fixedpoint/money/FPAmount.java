@@ -126,7 +126,10 @@ public final class FPAmount implements Serializable {
      * @param currency currency code (defines fractional digits)
      */
     private FPAmount(long gross, long[] amounts, FPCurrency currency) {
-        validate(gross); // only validate the gross amount, for overflow checking
+        validate(gross);
+        for (final long amount : amounts) {
+            validate(amount);
+        }
         this.currency = currency;
         this.gross = gross;
         this.amounts = amounts;
