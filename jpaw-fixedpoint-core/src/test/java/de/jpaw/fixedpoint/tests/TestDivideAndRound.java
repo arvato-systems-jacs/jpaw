@@ -58,6 +58,7 @@ public class TestDivideAndRound {
             { 4899L, 2000L, 3L, 1L },  // direct scaling path
             { 1234L, 3000L, 3L, 2L },
             { 6000L, 3000L, 3L, 0L },  // exact quotient
+            { 4899L, Long.MAX_VALUE, 0L, 0L }, // scaled divisor overflows long: BigDecimal fallback
             { 0L, 25L, 1L, 2L }
         };
 
@@ -81,6 +82,7 @@ public class TestDivideAndRound {
             { 1234L, 3L, 2L },
             { 4899L, 2L, 3L },         // desired scale equals the type scale, so no final scale reduction is needed
             { 6000L, 3L, 0L },         // exact quotient
+            { 4899L, Long.MAX_VALUE, 0L }, // scaled divisor overflows long: BigDecimal fallback
             { 0L, -5L, 2L }
         };
 

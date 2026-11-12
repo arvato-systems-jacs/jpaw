@@ -48,18 +48,18 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
     private static final int[] INT_POWERS_OF_TEN = {
             1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000
     };
-    protected static final long[] POWERS_OF_TEN = {
-            1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000,
-            10000000000L,
-            100000000000L,
-            1000000000000L,
-            10000000000000L,
-            100000000000000L,
-            1000000000000000L,
-            10000000000000000L,
-            100000000000000000L,
-            1000000000000000000L
-    };
+    protected static final long[] POWERS_OF_TEN = new long[19];  // 10^0 .. 10^18
+    protected static final long[] MIN_VALUE_DIVIDED_BY_POWERS_OF_TEN = new long[19];
+    protected static final long[] MAX_VALUE_DIVIDED_BY_POWERS_OF_TEN = new long[19];
+    static {
+        long val = 1L;
+        for (int i = 0; i < POWERS_OF_TEN.length; ++i) {
+            POWERS_OF_TEN[i] = val;
+            MIN_VALUE_DIVIDED_BY_POWERS_OF_TEN[i] = Long.MIN_VALUE / val;
+            MAX_VALUE_DIVIDED_BY_POWERS_OF_TEN[i] = Long.MAX_VALUE / val;
+            val *= 10L;  // last iteration will overflow, but that is ok, because we don't use it
+        }
+    }
 
     public static final long getPowerOfTen(final int scale) {
         return POWERS_OF_TEN[scale];
@@ -1001,14 +1001,18 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
         final int digitsToRound = scale() - desiredDecimals;
         if (digitsToRound <= that.scale()) {
             // we can implement the rounding by reduction of the scale factor, and later multiplication
-            return newInstanceOf(FixedPointNative.scale_and_divide(mantissa, that.scale() - digitsToRound, that.mantissa, rounding)
-              * POWERS_OF_TEN[digitsToRound]);
+            return newInstanceOf(FixedPointNative.scale_and_divide(mantissa, that.scale() - digitsToRound, that.mantissa, rounding) * POWERS_OF_TEN[digitsToRound]);
         } else {
-            // no multiplication at all, rather round
-            final long tempMantissa = FixedPointNative.scale_and_divide(mantissa, 0, that.mantissa, rounding) * POWERS_OF_TEN[that.scale()];
-            // still needs rounding by digitsToRound - that.scale() digits. FIXME: This is double rounding!
-            LOGGER.warn("Double rounding for scales {} & {}, desired {}", scale(), that.scale(), desiredDecimals);
-            return newInstanceOf(tempMantissa).round(desiredDecimals, rounding);
+            // This needs division by that.mantissa * 10^(digitsToRound - that.scale()). If it fits in a long,
+            // divide once at the requested precision, with no intermediate rounding.
+            final int divisorScale = digitsToRound - that.scale();
+            final long divisorFactor = POWERS_OF_TEN[divisorScale];
+            if (mantissa != Long.MIN_VALUE && canMultiplyByPowerOfTen(that.mantissa, divisorScale)) {
+                final long roundedMantissa = divide_longs(mantissa, that.mantissa * divisorFactor, rounding);
+                return newInstanceOf(Math.multiplyExact(roundedMantissa, POWERS_OF_TEN[digitsToRound]));
+            }
+            // The scaled divisor does not fit in a long (or divide_longs does not support Long.MIN_VALUE).
+            return divideAndRoundUsingBigDecimal(BigDecimal.valueOf(that.mantissa, that.scale()), desiredDecimals, rounding);
         }
     }
 
@@ -1032,12 +1036,24 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
             // we can implement the rounding by reduction of the scale factor, and later multiplication
             return newInstanceOf(FixedPointNative.scale_and_divide(mantissa, -digitsToRound, that, rounding) * POWERS_OF_TEN[digitsToRound]);
         } else {
-            // no multiplication at all, rather round
-            final long tempMantissa = FixedPointNative.scale_and_divide(mantissa, 0, that, rounding);
-            // still needs rounding by digitsToRound - that.scale() digits. FIXME: This is double rounding!
-            LOGGER.warn("Double rounding for scales {} & 0, desired {}", scale(), desiredDecimals);
-            return newInstanceOf(tempMantissa).round(desiredDecimals, rounding);
+            // This needs division by that * 10^digitsToRound. Use integer division when this scaled divisor fits.
+            if (mantissa != Long.MIN_VALUE && canMultiplyByPowerOfTen(that, digitsToRound)) {
+                final long roundedMantissa = divide_longs(mantissa, that * POWERS_OF_TEN[digitsToRound], rounding);
+                return newInstanceOf(Math.multiplyExact(roundedMantissa, POWERS_OF_TEN[digitsToRound]));
+            }
+            // The scaled divisor does not fit in a long (or divide_longs does not support Long.MIN_VALUE).
+            return divideAndRoundUsingBigDecimal(BigDecimal.valueOf(that), desiredDecimals, rounding);
         }
+    }
+
+    private static boolean canMultiplyByPowerOfTen(final long value, final int exponent) {
+        return value >= MIN_VALUE_DIVIDED_BY_POWERS_OF_TEN[exponent]
+                && value <= MAX_VALUE_DIVIDED_BY_POWERS_OF_TEN[exponent];
+    }
+
+    private CLASS divideAndRoundUsingBigDecimal(final BigDecimal divisor, final int desiredDecimals, final RoundingMode rounding) {
+        final BigDecimal quotient = BigDecimal.valueOf(mantissa, scale()).divide(divisor, desiredDecimals, rounding);
+        return newInstanceOf(quotient.movePointRight(scale()).longValueExact());
     }
 
     /** Divide two fixed point numbers of same type, returning the rounded down integral quotient. */
