@@ -13,10 +13,17 @@ import de.jpaw.fixedpoint.FixedPointBase;
 import de.jpaw.fixedpoint.FixedPointNative;
 import de.jpaw.fixedpoint.types.VariableUnits;
 
-/** A currency with at least one amount field (gross) and an optional breakdown (for example into net + taxes).
- * Instances of this class are immutable. */
+/**
+ * A currency with at least one amount field (gross) and an optional breakdown (for example into net + taxes).
+ * Instances of this class are immutable.
+ *
+ * To cater for database representation, this implementation performs checks to ensure that no more than 18 digits are accepted.
+ **/
 public final class FPAmount implements Serializable {
     private static final long serialVersionUID = -626929116120293201L;
+
+    public static final long MIN_MANTISSA = -999_999_999_999_999_999L;
+    public static final long MAX_MANTISSA =  999_999_999_999_999_999L;
 
     private static final long[] EMPTY_ARRAY = new long [0];
     private static final List<Long> EMPTY_LIST = ImmutableList.<Long>of();
@@ -36,31 +43,44 @@ public final class FPAmount implements Serializable {
         // array must be mapped to a list, as the array is not immutable
         if (amounts.length == 0)
             return EMPTY_LIST;
-        List<Long> result = new ArrayList<Long>(amounts.length);
+        final List<Long> result = new ArrayList<Long>(amounts.length);
         for (int i = 0; i < amounts.length; ++i) {
             result.add(amounts[i]);
         }
         return result;
     }
 
+    /** Performs a check for overflow, to ensure that no more than 18 digits are accepted. */
+    private static void validate(final long mantissa) {
+        if (mantissa < MIN_MANTISSA || mantissa > MAX_MANTISSA) {
+            throw new FPMoneyException(FPMoneyException.OVERFLOW_TOO_MANY_DIGITS);
+        }
+    }
 
     private static void validate(long gross, long[] amounts) {
+        validate(gross);
         for (int i = 0; i < amounts.length; ++i) {
-            gross -= amounts[i];
+            final long delta = amounts[i];
+            validate(delta);  // range check for each component
+            gross -= delta;
+            validate(gross);  // range check for the running sum
         }
-        if (gross != 0)
+        if (gross != 0L) {
             throw new IllegalArgumentException("gross does not match sum of amounts");
+        }
     }
 
     /** External validation method. Mainly for testing. It should never fail.
      * Does only something is there is some breakdown into amounts. */
     public void validate() {
-        if (amounts.length > 0)
+        if (amounts.length > 0) {
             validate(gross, amounts);
+        }
     }
 
     /** Creates a single amount from a Currency and a fixed point number. */
     public FPAmount(FixedPointBase<?> amount, CurrencyData currency) {
+        validate(amount.getMantissa());
         this.currency = new FPCurrency(currency, amount);
         this.gross = amount.getMantissa();
         this.amounts = EMPTY_ARRAY;
@@ -79,9 +99,11 @@ public final class FPAmount implements Serializable {
             validate(gross, netAndTaxes);
             this.amounts = netAndTaxes;
         } else {
+            validate(gross);
             this.amounts = EMPTY_ARRAY;
         }
     }
+
     public FPAmount(FPCurrency currency, long gross, long... amounts) {
         this.currency = currency;
         this.gross = gross;
@@ -90,17 +112,21 @@ public final class FPAmount implements Serializable {
             validate(gross, amounts);
             this.amounts = Arrays.copyOf(amounts, amounts.length);
         } else {
+            validate(gross);
             this.amounts = EMPTY_ARRAY;
         }
     }
 
-    /** Private constructor, which is essentially the same as the previous one, but avoids the array copy.
+    /**
+     * Private constructor, which is essentially the same as the previous one, but avoids the array copy.
      * To be used for cases when the passed array is known to be constructed solely for the new object anyway.
-     * @param gross
-     * @param amounts
-     * @param currency
+     *
+     * @param gross    total amount
+     * @param amounts  components
+     * @param currency currency code (defines fractional digits)
      */
     private FPAmount(long gross, long[] amounts, FPCurrency currency) {
+        validate(gross); // only validate the gross amount, for overflow checking
         this.currency = currency;
         this.gross = gross;
         this.amounts = amounts;

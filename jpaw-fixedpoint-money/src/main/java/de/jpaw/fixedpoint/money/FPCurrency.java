@@ -133,5 +133,4 @@ public final class FPCurrency implements Serializable {
         // Equals should be avoided because we don't know the object behind. Just compare the currency codes.
         return currency.getCurrencyCode().equals(other.currency.getCurrencyCode()) && zero.equals(other.zero);
     }
-
 }

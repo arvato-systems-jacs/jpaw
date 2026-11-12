@@ -1,9 +1,12 @@
-package de.jpaw.fixedpoint.money;
+package de.jpaw.fixedpoint.demo;
 
 import de.jpaw.api.iso.impl.JavaCurrencyDataProvider;
+import de.jpaw.fixedpoint.money.FPAmount;
+import de.jpaw.fixedpoint.money.FPCurrency;
 
-public final class FPCurrencyExtensions {
-   private FPCurrencyExtensions() { }
+/** Small demo how syntax sugar for xtend could be created. */
+public final class FPEurCurrencyExtensions {
+   private FPEurCurrencyExtensions() { }
 
     public static FPCurrency EUR = new FPCurrency(JavaCurrencyDataProvider.INSTANCE.get("EUR"));
 
@@ -11,6 +14,4 @@ public final class FPCurrencyExtensions {
     public static FPAmount Euro(long gross) {
         return new FPAmount(EUR, gross * 100);
     }
-
-
 }
