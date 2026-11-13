@@ -5,7 +5,7 @@ import de.jpaw.fixedpoint.money.FPAmount
 
 import static extension de.jpaw.fixedpoint.FixedPointExtensions.*
 import static extension de.jpaw.fixedpoint.money.FPAmountOperators.*
-import static extension de.jpaw.fixedpoint.money.FPCurrencyExtensions.*
+import static extension de.jpaw.fixedpoint.demo.FPEurCurrencyExtensions.*
 
 /** Syntactic sugar for the FPAmount class when used from xtend */
 class MoneyDemo {

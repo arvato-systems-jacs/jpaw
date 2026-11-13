@@ -31,6 +31,7 @@ public class FPMoneyException extends ApplicationException {
     public static final int INCOMPATIBLE_OPERANDS        = OFFSET + 8;
     public static final int INCORRECT_NUMBER_TAX_AMOUNTS = OFFSET + 9;
     public static final int NOT_AN_ISO4217_CODE          = OFFSET + 10;
+    public static final int OVERFLOW_TOO_MANY_DIGITS     = OFFSET + 11;
 
     public static final int UNEXPECTED_ROUNDING_PROBLEM  = OFFSET_ILE + 21;
 
@@ -48,6 +49,7 @@ public class FPMoneyException extends ApplicationException {
         registerCode(INCOMPATIBLE_OPERANDS,         "The operands differ in either currency or number of tax amounts");
         registerCode(INCORRECT_NUMBER_TAX_AMOUNTS,  "Incorrect number of tax amounts supplied");
         registerCode(NOT_AN_ISO4217_CODE,           "No decimals supplied and provided code not an official ISO 4217 code");
+        registerCode(OVERFLOW_TOO_MANY_DIGITS,      "Overflow due to too many digits (max 18 significant digits allowed)");
     }
 
     public FPMoneyException(int errorCode, String message) {

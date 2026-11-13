@@ -48,18 +48,18 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
     private static final int[] INT_POWERS_OF_TEN = {
             1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000
     };
-    protected static final long[] POWERS_OF_TEN = {
-            1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000,
-            10000000000L,
-            100000000000L,
-            1000000000000L,
-            10000000000000L,
-            100000000000000L,
-            1000000000000000L,
-            10000000000000000L,
-            100000000000000000L,
-            1000000000000000000L
-    };
+    protected static final long[] POWERS_OF_TEN = new long[19];  // 10^0 .. 10^18
+    protected static final long[] MIN_VALUE_DIVIDED_BY_POWERS_OF_TEN = new long[19];
+    protected static final long[] MAX_VALUE_DIVIDED_BY_POWERS_OF_TEN = new long[19];
+    static {
+        long val = 1L;
+        for (int i = 0; i < POWERS_OF_TEN.length; ++i) {
+            POWERS_OF_TEN[i] = val;
+            MIN_VALUE_DIVIDED_BY_POWERS_OF_TEN[i] = Long.MIN_VALUE / val;
+            MAX_VALUE_DIVIDED_BY_POWERS_OF_TEN[i] = Long.MAX_VALUE / val;
+            val *= 10L;  // last iteration will overflow, but that is ok, because we don't use it
+        }
+    }
 
     public static final long getPowerOfTen(final int scale) {
         return POWERS_OF_TEN[scale];
@@ -862,16 +862,39 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
         return newInstanceOf(newMantissa);
     }
 
-    /** Divides a / b and rounds according to specification. Does not need JNI, because we stay in range of a long here. */
-    public static long divide_longs(final long a, final long b, final RoundingMode rounding) {
+    /**
+     * Divides a / b and rounds according to specification. Does not need JNI, because we stay in range of a long here.
+     * The method is intended to be used for numbers with a maximum mantissa length of 18 digits, but this method only rejects values of Long.MIN_VALUE for either a or b.
+     **/
+    public static long divide_longs(long a, long b, final RoundingMode rounding) {
+        if (a == Long.MIN_VALUE) {
+            throw new ArithmeticException("Cannot divide Long.MIN_VALUE");
+        }
+        if (b < 0) {
+            if (b == Long.MIN_VALUE) {
+                throw new ArithmeticException("Cannot divide by Long.MIN_VALUE");
+            }
+            // code below assumes b is positive, so flip signs of both a and b if b is negative
+            // this is safe, because we do not support MIN_VALUE as a mantissa, so no overflow can occur
+            a = -a;
+            b = -b;
+        }
+        // now b is always a positive number, and a is any number except Long.MIN_VALUE. The result of the division will be in range of a long, so we can do it with simple integer arithmetic.
         final long tmp = a / b;
         final long mod = a % b;
-        if (mod == 0)
+        if (mod == 0) {
             return tmp;  // no rounding required: same for all modes...
+        }
+        // rounding is required
+        // compute some supporting data for the half-modes
+        final long absRemainder = mod < 0 ? -mod : mod;
+        final long half = b >> 1;  // division by 2, but we know b is positive, so no overflow can occur
+        final long step = a >= 0 ? 1 : -1;
+        // final boolean exactTie = (b & 1L) == 0 && absRemainder == half; // code inlined below where needed to avoid computation for cases when it is not required
 
         switch (rounding) {
         case UP:              // round towards bigger absolute value
-            return tmp + (a >= 0 ? 1 : -1);
+            return tmp + step;
         case DOWN:            // // round towards smaller absolute value
             return tmp;
         case CEILING:         // round towards bigger numerical value
@@ -879,37 +902,11 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
         case FLOOR:           // round towards smaller numerical value
             return a < 0 ? tmp - 1 : tmp;
         case HALF_UP:
-            if (a >= 0) {
-                return mod >= (b >> 1) ? tmp + 1 : tmp;
-            } else {
-                return mod <= -(b >> 1) ? tmp - 1 : tmp;
-            }
+            return absRemainder > half || ((b & 1L) == 0 && absRemainder == half) ? tmp + step : tmp;
         case HALF_DOWN:
-            if (a >= 0) {
-                return mod > (b >> 1) ? tmp + 1 : tmp;
-            } else {
-                return mod < -(b >> 1) ? tmp - 1 : tmp;
-            }
+            return absRemainder > half ? tmp + step : tmp;
         case HALF_EVEN:
-            if (a >= 0) {
-                if (mod > (b >> 1)) {
-                    return tmp + 1;
-                } else if (mod < (b >> 1)) {
-                    return tmp;
-                } else {
-                    // in this case, the rounding also depends on the last digit of the result. In case of equidistant numbers, it is rounded towards the nearest even number.
-                    return tmp + (tmp & 1);
-                }
-            } else {
-                if (mod < -(b >> 1)) {
-                    return tmp - 1;
-                } else if (mod > -(b >> 1)) {
-                    return tmp;
-                } else {
-                    // in this case, the rounding also depends on the last digit of the result. In case of equidistant numbers, it is rounded towards the nearest even number.
-                    return tmp - (tmp & 1);
-                }
-            }
+            return absRemainder > half || (((b & 1L) == 0 && absRemainder == half) && (tmp & 1L) != 0) ? tmp + step : tmp;
         case UNNECESSARY:
             throw new ArithmeticException("Rounding required but forbidden by roundingMode parameter");
         default:
@@ -1004,14 +1001,18 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
         final int digitsToRound = scale() - desiredDecimals;
         if (digitsToRound <= that.scale()) {
             // we can implement the rounding by reduction of the scale factor, and later multiplication
-            return newInstanceOf(FixedPointNative.scale_and_divide(mantissa, that.scale() - digitsToRound, that.mantissa, rounding)
-              * POWERS_OF_TEN[digitsToRound]);
+            return newInstanceOf(FixedPointNative.scale_and_divide(mantissa, that.scale() - digitsToRound, that.mantissa, rounding) * POWERS_OF_TEN[digitsToRound]);
         } else {
-            // no multiplication at all, rather round
-            final long tempMantissa = FixedPointNative.scale_and_divide(mantissa, 0, that.mantissa, rounding) * POWERS_OF_TEN[that.scale()];
-            // still needs rounding by digitsToRound - that.scale() digits. FIXME: This is double rounding!
-            LOGGER.warn("Double rounding for scales {} & {}, desired {}", scale(), that.scale(), desiredDecimals);
-            return newInstanceOf(tempMantissa).round(desiredDecimals, rounding);
+            // This needs division by that.mantissa * 10^(digitsToRound - that.scale()). If it fits in a long,
+            // divide once at the requested precision, with no intermediate rounding.
+            final int divisorScale = digitsToRound - that.scale();
+            final long divisorFactor = POWERS_OF_TEN[divisorScale];
+            if (mantissa != Long.MIN_VALUE && canMultiplyByPowerOfTen(that.mantissa, divisorScale)) {
+                final long roundedMantissa = divide_longs(mantissa, that.mantissa * divisorFactor, rounding);
+                return newInstanceOf(Math.multiplyExact(roundedMantissa, POWERS_OF_TEN[digitsToRound]));
+            }
+            // The scaled divisor does not fit in a long (or divide_longs does not support Long.MIN_VALUE).
+            return divideAndRoundUsingBigDecimal(BigDecimal.valueOf(that.mantissa, that.scale()), desiredDecimals, rounding);
         }
     }
 
@@ -1035,12 +1036,24 @@ public abstract class FixedPointBase<CLASS extends FixedPointBase<CLASS>> extend
             // we can implement the rounding by reduction of the scale factor, and later multiplication
             return newInstanceOf(FixedPointNative.scale_and_divide(mantissa, -digitsToRound, that, rounding) * POWERS_OF_TEN[digitsToRound]);
         } else {
-            // no multiplication at all, rather round
-            final long tempMantissa = FixedPointNative.scale_and_divide(mantissa, 0, that, rounding);
-            // still needs rounding by digitsToRound - that.scale() digits. FIXME: This is double rounding!
-            LOGGER.warn("Double rounding for scales {} & 0, desired {}", scale(), desiredDecimals);
-            return newInstanceOf(tempMantissa).round(desiredDecimals, rounding);
+            // This needs division by that * 10^digitsToRound. Use integer division when this scaled divisor fits.
+            if (mantissa != Long.MIN_VALUE && canMultiplyByPowerOfTen(that, digitsToRound)) {
+                final long roundedMantissa = divide_longs(mantissa, that * POWERS_OF_TEN[digitsToRound], rounding);
+                return newInstanceOf(Math.multiplyExact(roundedMantissa, POWERS_OF_TEN[digitsToRound]));
+            }
+            // The scaled divisor does not fit in a long (or divide_longs does not support Long.MIN_VALUE).
+            return divideAndRoundUsingBigDecimal(BigDecimal.valueOf(that), desiredDecimals, rounding);
         }
+    }
+
+    private static boolean canMultiplyByPowerOfTen(final long value, final int exponent) {
+        return value >= MIN_VALUE_DIVIDED_BY_POWERS_OF_TEN[exponent]
+                && value <= MAX_VALUE_DIVIDED_BY_POWERS_OF_TEN[exponent];
+    }
+
+    private CLASS divideAndRoundUsingBigDecimal(final BigDecimal divisor, final int desiredDecimals, final RoundingMode rounding) {
+        final BigDecimal quotient = BigDecimal.valueOf(mantissa, scale()).divide(divisor, desiredDecimals, rounding);
+        return newInstanceOf(quotient.movePointRight(scale()).longValueExact());
     }
 
     /** Divide two fixed point numbers of same type, returning the rounded down integral quotient. */
