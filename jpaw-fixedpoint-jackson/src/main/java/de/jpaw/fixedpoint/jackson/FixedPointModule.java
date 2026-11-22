@@ -1,6 +1,6 @@
 package de.jpaw.fixedpoint.jackson;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.module.SimpleModule;
 
 import de.jpaw.fixedpoint.factories.MicroUnitsFactory;
 import de.jpaw.fixedpoint.factories.MilliUnitsFactory;

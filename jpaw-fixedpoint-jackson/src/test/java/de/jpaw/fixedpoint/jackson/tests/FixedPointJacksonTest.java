@@ -3,7 +3,8 @@ package de.jpaw.fixedpoint.jackson.tests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import de.jpaw.fixedpoint.jackson.FixedPointModule;
 import de.jpaw.fixedpoint.types.MicroUnits;
@@ -19,9 +20,9 @@ public class FixedPointJacksonTest {
     static final String DATA_AS_JSON = "{\"bool\":true,\"num\":3.14,\"num2\":-3.14}";
 
     private ObjectMapper createMapper() {
-        final ObjectMapper om = new ObjectMapper();
-        om.registerModule(new FixedPointModule());
-        return om;
+        return JsonMapper.builder()
+            .addModule(new FixedPointModule())
+            .build();
     }
 
     @Test
@@ -32,7 +33,6 @@ public class FixedPointJacksonTest {
         srcData.num2 = MilliUnits.of(-3140);
 
         final ObjectMapper om = createMapper();
-        om.registerModule(new FixedPointModule());
         String srcAsString = om.writeValueAsString(srcData);
 
         Assertions.assertEquals(DATA_AS_JSON, srcAsString, "Serialized form of srcData");
