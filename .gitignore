@@ -52,3 +52,6 @@ xtend-gen/
 # intellij
 *.iml
 .idea
+
+# vscode settings
+.vscode/

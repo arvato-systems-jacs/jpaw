@@ -1,18 +1,15 @@
 package de.jpaw.fixedpoint.jackson;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
 import de.jpaw.fixedpoint.FixedPointBase;
 import de.jpaw.fixedpoint.FixedPointFactory;
 
 public class FixedPointJacksonDeserializer<CLASS extends FixedPointBase<CLASS>> extends StdDeserializer<CLASS> {
-    private static final long serialVersionUID = -194246924592207982L;
 
     final private FixedPointFactory<CLASS> factory;
 
@@ -22,7 +19,7 @@ public class FixedPointJacksonDeserializer<CLASS extends FixedPointBase<CLASS>> 
     }
 
     @Override
-    public CLASS deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public CLASS deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
         final JsonToken whatIsThere = p.currentToken();
         if (whatIsThere == null) {
             return null;
@@ -34,7 +31,7 @@ public class FixedPointJacksonDeserializer<CLASS extends FixedPointBase<CLASS>> 
             return factory.valueOf(p.getLongValue());
         case VALUE_NUMBER_FLOAT:
             // return factory.valueOf(p.getDecimalValue());  // not ideal, since it constructs a temporary BigDecimal. Can we access the source string directly?
-            return factory.valueOf(p.getText());  // construct fixed point class directly from input string
+            return factory.valueOf(p.getString());  // construct fixed point class directly from input string
         default:
             ctxt.reportInputMismatch(factory.instanceClass(), "FixedPointParser: Invalid token " + whatIsThere);
             return null; // does not occur due to exception
